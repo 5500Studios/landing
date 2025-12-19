@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>5500's Studios — Juegos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;
+      --glass-1: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.04);
+      --accent: linear-gradient(90deg,#7be9ff 0%,#a29bff 50%,#ff9ec2 100%);
+      --text: #eaf3ff;
+      --muted: #9fb0c8;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124, 58, 237,0.12), transparent),
+                  radial-gradient(900px 500px at 90% 90%, rgba(34, 211, 238,0.06), transparent),
+                  var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+      padding-bottom:80px;
+    }
+    /* Floating blob background to create 'liquid' motion */
+    .blobs{
+      position:fixed;inset:0;pointer-events:none;z-index:0;mix-blend-mode:screen;opacity:0.9;
+    }
+    .blob{position:absolute;filter:blur(60px);opacity:0.9;transform:translate3d(0,0,0)}
+    .blob.b1{width:520px;height:520px;background:radial-gradient(circle at 30% 30%, #7be9ff 0%, #7be9ff 20%, transparent 60%);left:-120px;top:-120px}
+    .blob.b2{width:420px;height:420px;background:radial-gradient(circle at 40% 40%, #b28bff 0%, #b28bff 20%, transparent 60%);right:-80px;top:40px}
+   
+    /* Container */
+    .wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:36px 24px}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:12px;padding:8px;background:linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03));backdrop-filter:blur(6px);box-shadow:0 6px 20px rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+    .brand h1{margin:0;font-size:18px;letter-spacing:0.6px}
+    nav a{color:var(--muted);text-decoration:none;margin-left:16px;font-weight:600}
+    nav a:hover{color:var(--text)}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-top:28px}
+    .hero-card{padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    .hero h2{margin:0 0 8px 0;font-size:28px}
+    .hero p{color:var(--muted);margin:0 0 18px 0}
+    .cta{display:inline-block;padding:10px 14px;border-radius:12px;background:var(--accent);color:#061226;font-weight:700;text-decoration:none}
+
+    /* Games grid */
+    .games{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+    .game-card{padding:18px;border-radius:14px;background:linear-gradient(180deg,var(--glass-1),var(--glass-2));backdrop-filter:blur(12px);min-height:150px;position:relative;overflow:hidden}
+    .game-card h3{margin:0 0 6px 0}
+    .muted{color:var(--muted);font-size:14px}
+    .tag{position:absolute;right:12px;top:12px;font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.06)}
+
+    /* Lo que vas a encontrar - tabs */
+    .features{margin-top:36px;padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter:blur(10px)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{padding:8px 12px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--muted);cursor:pointer}
+.tab.active{border-color:rgba(255,255,255,0.06);color:var(--text);background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
+.feature{padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+   
+
+    /* FAQ */
+    .faq{margin-top:36px}
+    .faq-item{border-radius:12px;padding:12px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.02)}
+    .question{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+    .answer{max-height:0;overflow:hidden;transition:max-height .32s ease;padding-top:0}
+    .faq-item.open .answer{max-height:200px;padding-top:10px}
+
+    /* Reveal animation (scroll) */
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.9,.2,1),transform .6s cubic-bezier(.2,.9,.2,1)}
+    .reveal.show{opacity:1;transform:none}
+
+    footer{margin-top:48px;text-align:center;color:var(--muted);font-size:14px}
+
+    @media (max-width:900px){.hero{grid-template-columns:1fr}.hero-card{order:2}.brand h1{font-size:16px}}
+  </style>
+</head>
+<body>
+  <div class="blobs" aria-hidden>
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="wrap">
+    <header class="reveal">
+      <div class="brand">
+        <div class="logo">55
+          00</div>
+        <div>
+          <h1>5500's Studios</h1>
+          <div class="muted">Juegos de Roblox • Experiencias online</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#features">Lo que vas a encontrar</a>
+        <a href="#faq">Preguntas frecuentes</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card reveal">
+        <h2>Bienvenido a 5500's Studios</h2>
+        <p>Creando experiencias multijugador y niveles memorables, descubrí nuestros juegos:</p>
+      </div>
+
+      <div class="hero-card reveal">
+        <h3>Última actualización</h3>
+        <div class="muted" id="latest-updates">
+          <!-- JS inyecta las fechas -->
+        </div>
+      </div>
+    </section>
+
+    <section id="juegos" class="reveal">
+      <h2 style="margin-top:28px">Juegos del estudio</h2>
+      <div class="games" id="games-list">
+        <!-- JS inyecta tarjetas -->
+      </div>
+    </section>
+
+    <section id="features" class="features reveal">
+      <h2>Lo que vas a encontrar</h2>
+      <div class="tabs" id="game-tabs">
+        <!-- JS inyecta tabs -->
+      </div>
+      <div class="features-grid" id="features-grid">
+        <!-- JS inyecta features -->
+      </div>
+    </section>
+
+    <section id="faq" class="faq reveal">
+      <h2>Preguntas frecuentes</h2>
+      <div class="faq-item">
+        <div class="question"><strong>¿Donde puedo jugar los juegos?</strong><span>+</span></div>
+        <div class="answer muted">Los juegos se encuentran en Roblox.</div>
+      </div>
+      <div class="faq-item">
+        <div class="question"><strong>¿Puedo jugar en línea con amigos?</strong><span>+</span></div>
+        <div class="answer muted">Si, es posible y los juegos estan muy bien optimizados para ese modo</div>
+      </div>
+      <div class="faq-item">
+        <div class="question"><strong>¿Qué significa "BETA"?</strong><span>+</span></div>
+        <div class="answer muted">Significa que el acceso está limitado a cuentas de desarrollador e internos para pruebas. No es para jugadores regulares.</div>
+      </div>
+    </section>
+
+    <footer class="reveal">
+      <div>© 2025 5500's Studios — Hecho con ♥</div>
+    </footer>
+  </div>
+
+  <script>
+    // DATA: juegos y características
+    const GAMES = [
+      {
+        id:'call-of-blox',
+        title:'Call of Blox',
+        update:'2025-10-01',
+        status:'❌',
+        features:[
+          'Optimizado para todas las plataformas.'
+        ]
+      },
+      {
+        id:'call-of-blox-mapa-2',
+        title:'Call of Blox: Mapa 2',
+        update:'2025-09-12',
+        status:'✅',
+        features:[
+          'Partidas rapidas: Partidas de 5 minutos 25c25 con respawn',
+        ]
+      },
+      {
+        id:'centro-entrenamiento',
+        title:'Call of Blox: Entrenamiento',
+        update:'2025-08-08',
+        status:'✅',
+        features:[
+          'Entrenamiento de puntería'
+        ]
+      },
+      {
+        id:'call-of-blox-beta',
+        title:'Call of Blox BETA',
+        update:'2025-10-10',
+        status:'✅ (Solo devs)',
+        features:[
+          'Builds pre-lanzamiento',
+        ]
+      },
+      {
+        id:'blue-road',
+        title:'Blue Road',
+        update:'2025-07-23',
+        status:'✅',
+        features:[
+          'Gameplay fluido: Ambiente tenso y divertido, animaciones suaves y una experiencia dinámica',
+        ]
+      }
+    ];
+
+    // Render games
+    const gamesList = document.getElementById('games-list');
+    const latestUpdates = document.getElementById('latest-updates');
+    GAMES.forEach(g=>{
+      const card = document.createElement('article');
+      card.className='game-card reveal';
+      card.innerHTML = `
+        <div class='tag'>${g.status}</div>
+        <h3>${g.title}</h3>
+        <div class='muted'>Última actualización: <strong>${g.update}</strong></div>
+        <p class='muted' style='margin-top:12px'>Resumen: ${g.features.slice(0,2).join(' · ')}${g.features.length>2? ' · ...':''}</p>
+      `;
+      gamesList.appendChild(card);
+    });
+
+    // Latest updates compact
+    latestUpdates.innerHTML = GAMES.map(g=>`<div style="margin-bottom:8px"><strong>${g.title}</strong><div class='muted'>${g.update} — ${g.status}</div></div>`).join('');
+
+    // Tabs for features
+    const tabs = document.getElementById('game-tabs');
+    const featuresGrid = document.getElementById('features-grid');
+    GAMES.forEach((g,i)=>{
+      const btn = document.createElement('button');
+      btn.className='tab' + (i===0? ' active':'');
+      btn.textContent = g.title;
+      btn.dataset.game = g.id;
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        btn.classList.add('active');
+        showFeatures(g.id);
+        revealAll();
+      });
+      tabs.appendChild(btn);
+    });
+    function showFeatures(gameId){
+      const game = GAMES.find(x=>x.id===gameId);
+      featuresGrid.innerHTML = '';
+      game.features.forEach(f=>{
+        const el = document.createElement('div');
+        el.innerHTML = `<strong>${f}</strong><div class='muted' style='margin-top:8px;font-size:13px>${f.toLowerCase()}'.</div>`;
+        el.className='feature reveal';
+        featuresGrid.appendChild(el);
+      });
+    }
+    showFeatures(GAMES[0].id);
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-item .question').forEach(q=>{
+      q.addEventListener('click',()=>{
+        const parent = q.parentElement;
+        parent.classList.toggle('open');
+        parent.querySelector('.question span').textContent = parent.classList.contains('open')? '−' : '+';
+      });
+    });
+
+    // Scroll reveal using IntersectionObserver
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('show');
+        }
+      });
+    },{threshold:0.12});
+
+    function revealAll(){
+      document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+    }
+    revealAll();
+
+    // subtle blob movement
+    const t0 = Date.now();
+    const b1 = document.querySelector('.blob.b1');
+    const b2 = document.querySelector('.blob.b2');
+    const b3 = document.querySelector('.blob.b3');
+    function animateBlobs(){
+      const t = (Date.now()-t0)/1200;
+      b1.style.transform = `translate3d(${Math.sin(t)*18}px, ${Math.cos(t/1.2)*12}px,0) scale(1.02)`;
+      b2.style.transform = `translate3d(${Math.cos(t/1.3)*12}px, ${Math.sin(t/1.5)*16}px,0) scale(1.01)`;
+      b3.style.transform = `translate3d(${Math.sin(t/1.7)*10}px, ${Math.cos(t/1.9)*10}px,0) scale(1.03)`;
+      requestAnimationFrame(animateBlobs);
+    }
+    requestAnimationFrame(animateBlobs);
+
+    // small accessibility: keyboard nav focus styles
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Tab') document.body.style.outline = 'none';
+    });
+  </script>
+</body>
+</html>
+
